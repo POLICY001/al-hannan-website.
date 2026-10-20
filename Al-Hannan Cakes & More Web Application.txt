@@ -1,0 +1,1186 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  ShoppingBag, 
+  Phone, 
+  MapPin, 
+  Instagram, 
+  Facebook, 
+  Search, 
+  Plus, 
+  X, 
+  ChevronRight, 
+  Star, 
+  Heart, 
+  Filter, 
+  MessageSquare, 
+  Image as ImageIcon, 
+  CheckCircle, 
+  ArrowRight,
+  Clock,
+  ShieldCheck,
+  Sparkles,
+  Menu,
+  Trash2,
+  Send,
+  Upload
+} from 'lucide-react';
+
+// Main Catalog Items corresponding to user list
+const INITIAL_PRODUCTS = [
+  {
+    id: 1,
+    name: 'Luxury Marble Wedding Cake',
+    category: 'Cakes',
+    price: 85000,
+    tag: 'Wedding',
+    rating: 5.0,
+    prepTime: '48 hrs notice',
+    description: 'Exquisite 3-tier marble effect fondant cake decorated with edible 24k gold leaf and fresh white orchids.',
+    image: 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 2,
+    name: 'Classic Pink Rosette Birthday Cake',
+    category: 'Cakes',
+    price: 25000,
+    tag: 'Birthday',
+    rating: 4.9,
+    prepTime: '24 hrs notice',
+    description: 'Moist vanilla sponge layered with silky buttercream, decorated with soft pink rosette piping and sprinkles.',
+    image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 3,
+    name: 'Pearl & Cap Graduation Cake',
+    category: 'Cakes',
+    price: 32000,
+    tag: 'Graduation',
+    rating: 5.0,
+    prepTime: '24 hrs notice',
+    description: 'Elegant blush pink cake adorned with delicate pearl swags and a handcrafted fondant graduation cap topper.',
+    image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 4,
+    name: 'Velvet Trio (Red Velvet, Chocolate & Strawberry)',
+    category: 'Cakes',
+    price: 30000,
+    tag: 'Best Seller',
+    rating: 4.9,
+    prepTime: 'Same day avail.',
+    description: 'A decadent combination of iconic flavors: rich cream-cheese Red Velvet, Belgian Fudge Chocolate, and Fresh Strawberry.',
+    image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 5,
+    name: 'Golden Crisp Samosas (Platter of 20)',
+    category: 'Small Chops',
+    price: 8000,
+    tag: 'Crispy',
+    rating: 4.8,
+    prepTime: 'Fresh hot fry',
+    description: 'Crispy triangular pastry shells loaded with seasoned spiced minced meat and sweet spring vegetables.',
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 6,
+    name: 'Golden Spring Rolls (Platter of 20)',
+    category: 'Small Chops',
+    price: 8000,
+    tag: 'Party Favorite',
+    rating: 4.9,
+    prepTime: 'Fresh hot fry',
+    description: 'Golden crunchy rolls filled with tender shredded chicken, cabbage, and aromatic sesame vegetable mix.',
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 7,
+    name: 'Fluffy Golden Puff-Puff Bucket',
+    category: 'Small Chops',
+    price: 5000,
+    tag: 'Popular',
+    rating: 5.0,
+    prepTime: 'Freshly fried',
+    description: 'Soft, airy, sweet Nigerian fried dough balls cooked to golden perfection with a hint of nutmeg.',
+    image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 8,
+    name: 'Flaky Meaty Meat Pie (Box of 6)',
+    category: 'Pastries',
+    price: 6000,
+    tag: 'Savory',
+    rating: 4.9,
+    prepTime: 'Daily baked',
+    description: 'Butter-rich flaky crust stuffed generously with seasoned minced beef, potatoes, and rich carrots.',
+    image: 'https://images.unsplash.com/photo-1608039829572-78524f79c4c7?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 9,
+    name: 'Golden Egg Rolls (Box of 6)',
+    category: 'Pastries',
+    price: 4500,
+    tag: 'Snack',
+    rating: 4.7,
+    prepTime: 'Daily fresh',
+    description: 'Golden fried savory dough wrapped around a whole farm-fresh boiled egg with seasoned crust.',
+    image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 10,
+    name: 'Cupcake Duo: Vanilla Sprinkles & Double Chocolate',
+    category: 'Cakes',
+    price: 9000,
+    tag: 'Pack of 6',
+    rating: 4.9,
+    prepTime: 'Ready daily',
+    description: 'Fluffy vanilla cupcakes piped with buttercream & sprinkles alongside dark rich fudge chocolate cupcakes.',
+    image: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 11,
+    name: 'Crunchy Milky Chin Chin (1kg Jar)',
+    category: 'Pastries',
+    price: 4500,
+    tag: 'Crunchy',
+    rating: 5.0,
+    prepTime: 'In Stock',
+    description: 'Irresistibly crunchy, rich milk-infused mini bite-sized Nigerian chin chin baked to golden perfection.',
+    image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 12,
+    name: 'Probiotic Creamy Yogurt Parfait',
+    category: 'Drinks & Sweets',
+    price: 3500,
+    tag: 'Chilled',
+    rating: 4.8,
+    prepTime: 'Chilled ready',
+    description: 'Rich thick greek-style sweetened yogurt layered with fresh crunchy granola, honey, and fresh berries.',
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 13,
+    name: 'Loaded Shawarma & Cheesesteak Wrap',
+    category: 'Savory Sweets',
+    price: 4000,
+    tag: 'Extra Cheese',
+    rating: 4.9,
+    prepTime: 'Made hot',
+    description: 'Grilled spiced beef strip wrap stuffed with sausage, melted mozzarella, garlic cream, and crunchy cabbage.',
+    image: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 14,
+    name: 'Milky & Glazed Ring Doughnuts (Box of 6)',
+    category: 'Pastries',
+    price: 5500,
+    tag: 'Soft',
+    rating: 4.9,
+    prepTime: 'Morning fresh',
+    description: 'Pillow-soft yeast glazed doughnuts dusted in powdered milk coating and classic sugary mirror glaze.',
+    image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 15,
+    name: 'Refreshing Chilled Hibiscus Zobo (1L Bottle)',
+    category: 'Drinks & Sweets',
+    price: 1500,
+    tag: 'Natural',
+    rating: 5.0,
+    prepTime: 'Ice Cold',
+    description: '100% natural organic hibiscus tea brewed with real pineapple, ginger, cloves, and sweet fruit nectar.',
+    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80'
+  }
+];
+
+const INITIAL_GALLERY = [
+  { id: 1, title: 'Luxury Black Marble Wedding Cake', category: 'Cakes', image: 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?auto=format&fit=crop&w=800&q=80' },
+  { id: 2, title: 'Classic Rosette Pink Birthday Cake', category: 'Cakes', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80' },
+  { id: 3, title: 'Pink & Pearl Cap Graduation Cake', category: 'Cakes', image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=800&q=80' },
+  { id: 4, title: 'Crispy Samosa Treats', category: 'Small Chops', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80' },
+  { id: 5, title: 'Golden Spring Rolls Tray', category: 'Small Chops', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80' },
+  { id: 6, title: 'Nigerian Golden Puff-Puff', category: 'Small Chops', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80' },
+  { id: 7, title: 'Fresh Baked Meat Pies', category: 'Pastries', image: 'https://images.unsplash.com/photo-1608039829572-78524f79c4c7?auto=format&fit=crop&w=800&q=80' },
+  { id: 8, title: 'Golden Egg Rolls Box', category: 'Pastries', image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80' },
+  { id: 9, title: 'Gourmet Cupcake Variety', category: 'Cakes', image: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=800&q=80' },
+  { id: 10, title: 'Sweet Crunchy Chin Chin', category: 'Pastries', image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80' },
+  { id: 11, title: 'Berry Yogurt Parfait', category: 'Drinks', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80' },
+  { id: 12, title: 'Velvet Trio Cake Slice', category: 'Cakes', image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80' },
+  { id: 13, title: 'Juicy Steak & Cheese Shawarma', category: 'Savory', image: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80' },
+  { id: 14, title: 'Milky Glazed Glazed Donuts', category: 'Pastries', image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80' },
+  { id: 15, title: 'Iced Organic Fruit Zobo Drink', category: 'Drinks', image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80' }
+];
+
+export default function App() {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [galleryItems, setGalleryItems] = useState(INITIAL_GALLERY);
+  const [galleryFilter, setGalleryFilter] = useState('All');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // New gallery image upload state
+  const [newImageTitle, setNewImageTitle] = useState('');
+  const [newImageCategory, setNewImageCategory] = useState('Cakes');
+  const [newImageUrl, setNewImageUrl] = useState('');
+
+  // Custom order form state
+  const [customOrder, setCustomOrder] = useState({
+    name: '',
+    eventDate: '',
+    cakeFlavor: 'Red Velvet',
+    servings: '20-30 People',
+    notes: ''
+  });
+
+  const WHATSAPP_NUMBER = '2347061459509';
+
+  // Add item to cart
+  const addToCart = (product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+  };
+
+  // Update quantity
+  const updateQuantity = (id, delta) => {
+    setCart((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === id) {
+            const newQty = item.quantity + delta;
+            return newQty > 0 ? { ...item, quantity: newQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean)
+    );
+  };
+
+  // Calculate cart total
+  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Format currency in Nigerian Naira
+  const formatNaira = (amount) => {
+    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
+  };
+
+  // Quick Order on WhatsApp for single item
+  const handleSingleWhatsAppOrder = (product) => {
+    const text = `Hello Al-Hannan Cakes & More! 👋\n\nI would like to order:\n*${product.name}*\nPrice: ${formatNaira(product.price)}\n\nPlease let me know the availability and delivery details!`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  // Full Cart Checkout via WhatsApp
+  const handleCartCheckout = () => {
+    if (cart.length === 0) return;
+    let text = `Hello Al-Hannan Cakes & More! 👋\n\nI want to place an order for:\n`;
+    cart.forEach((item, index) => {
+      text += `${index + 1}. *${item.name}* (x${item.quantity}) - ${formatNaira(item.price * item.quantity)}\n`;
+    });
+    text += `\n*Total Order Value:* ${formatNaira(cartTotal)}\n\nPlease process my order. Thank you!`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  // Custom Order Submission via WhatsApp
+  const handleCustomOrderSubmit = (e) => {
+    e.preventDefault();
+    const text = `Hello Al-Hannan Cakes & More! 🎂\n\n*Custom Order Request*\n• *Customer Name:* ${customOrder.name}\n• *Event Date:* ${customOrder.eventDate}\n• *Preferred Flavor:* ${customOrder.cakeFlavor}\n• *Guest Count:* ${customOrder.servings}\n• *Special Notes:* ${customOrder.notes || 'None'}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  // Add new image to gallery
+  const handleAddGalleryImage = (e) => {
+    e.preventDefault();
+    if (!newImageUrl || !newImageTitle) return;
+    const newItem = {
+      id: Date.now(),
+      title: newImageTitle,
+      category: newImageCategory,
+      image: newImageUrl
+    };
+    setGalleryItems([newItem, ...galleryItems]);
+    setNewImageTitle('');
+    setNewImageUrl('');
+    setIsAddModalOpen(false);
+  };
+
+  // Filter products
+  const filteredProducts = INITIAL_PRODUCTS.filter((prod) => {
+    const matchesCategory = selectedCategory === 'All' || prod.category === selectedCategory;
+    const matchesSearch = prod.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          prod.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Filter gallery items
+  const filteredGallery = galleryItems.filter(
+    (item) => galleryFilter === 'All' || item.category === galleryFilter
+  );
+
+  return (
+    <div className="min-h-screen bg-[#FFFDF9] text-gray-800 font-sans selection:bg-[#D4AF37] selection:text-white">
+      
+      {/* 1. TOP ANNOUNCEMENT BAR */}
+      <div className="bg-[#381344] text-[#E5C158] text-xs md:text-sm py-2 px-4 text-center font-medium tracking-wide flex justify-center items-center gap-2 shadow-inner">
+        <Sparkles className="w-4 h-4 animate-pulse" />
+        <span>We don't just bake cakes, we bake happiness! • Fresh Delivery in Ibadan & Environs</span>
+        <Sparkles className="w-4 h-4 animate-pulse" />
+      </div>
+
+      {/* 2. NAVBAR */}
+      <header className="sticky top-0 z-40 bg-[#4B1D5A] text-white shadow-lg border-b border-[#D4AF37]/30 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            
+            {/* Brand Logo & Name */}
+            <a href="#hero" className="flex items-center gap-3 group">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#FFF5C0] p-0.5 shadow-md transform group-hover:scale-105 transition duration-300">
+                <div className="w-full h-full bg-[#4B1D5A] rounded-full flex items-center justify-center font-serif font-bold text-2xl text-[#E5C158] border border-[#D4AF37]/40">
+                  A
+                </div>
+              </div>
+              <div>
+                <h1 className="font-serif font-bold text-xl md:text-2xl tracking-wide text-white leading-none">
+                  AL-HANNAN
+                </h1>
+                <p className="text-[10px] md:text-xs text-[#E5C158] tracking-widest uppercase font-light">
+                  Cakes & More
+                </p>
+              </div>
+            </a>
+
+            {/* Desktop Navigation Links */}
+            <nav className="hidden md:flex items-center gap-8 font-medium text-sm">
+              <a href="#menu" className="hover:text-[#E5C158] transition">Menu & Treats</a>
+              <a href="#about" className="hover:text-[#E5C158] transition">About Us</a>
+              <a href="#custom" className="hover:text-[#E5C158] transition">Custom Order</a>
+              <a href="#gallery" className="hover:text-[#E5C158] transition">Gallery</a>
+              <a href="#contact" className="hover:text-[#E5C158] transition">Contact Us</a>
+            </nav>
+
+            {/* Cart & WhatsApp Call-to-action */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsCartOpen(true)}
+                className="relative p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[#E5C158] hover:text-white"
+                aria-label="View Order Basket"
+              >
+                <ShoppingBag className="w-6 h-6" />
+                {cart.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#D4AF37] text-[#4B1D5A] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow">
+                    {cart.reduce((a, b) => a + b.quantity, 0)}
+                  </span>
+                )}
+              </button>
+
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noreferrer"
+                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white px-4 py-2 rounded-full font-medium text-sm shadow-md transition transform hover:-translate-y-0.5"
+              >
+                <MessageSquare className="w-4 h-4 fill-current" />
+                <span>Order via WhatsApp</span>
+              </a>
+
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 text-white hover:text-[#E5C158]"
+              >
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-[#381344] border-t border-white/10 px-4 pt-3 pb-6 space-y-3">
+            <a 
+              href="#menu" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="block py-2 text-white hover:text-[#E5C158] border-b border-white/5"
+            >
+              Menu & Treats
+            </a>
+            <a 
+              href="#about" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="block py-2 text-white hover:text-[#E5C158] border-b border-white/5"
+            >
+              About Us
+            </a>
+            <a 
+              href="#custom" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="block py-2 text-white hover:text-[#E5C158] border-b border-white/5"
+            >
+              Custom Order
+            </a>
+            <a 
+              href="#gallery" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="block py-2 text-white hover:text-[#E5C158] border-b border-white/5"
+            >
+              Photo Gallery
+            </a>
+            <a 
+              href="#contact" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="block py-2 text-white hover:text-[#E5C158]"
+            >
+              Contact & Location
+            </a>
+          </div>
+        )}
+      </header>
+
+      {/* 3. HERO SECTION */}
+      <section id="hero" className="relative bg-gradient-to-br from-[#4B1D5A] via-[#381344] to-[#250b2e] text-white overflow-hidden py-16 md:py-24">
+        {/* Decorative Background Circles */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#D4AF37]/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-[#4B1D5A]/30 blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#E5C158] text-xs md:text-sm font-medium">
+                <Heart className="w-3.5 h-3.5 fill-[#E5C158]" />
+                <span>Made with love, Served with Joy</span>
+              </div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-white leading-tight">
+                Cakes for Every Occasion, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFF5C0] via-[#E5C158] to-[#D4AF37]">Memories That Last</span>
+              </h1>
+              
+              <p className="text-lg text-purple-100/90 max-w-2xl mx-auto lg:mx-0 font-light">
+                At Al-Hannan Cakes & More, we turn your sweet dreams into reality. Specialized luxury cakes, fresh puff-puff, savory samosas, wraps, and delightful treats baked daily in Ibadan.
+              </p>
+
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
+                <a
+                  href="#menu"
+                  className="bg-gradient-to-r from-[#D4AF37] to-[#B38F24] text-[#381344] hover:brightness-110 font-bold px-8 py-3.5 rounded-full shadow-lg transition transform hover:-translate-y-1 flex items-center gap-2"
+                >
+                  <span>Explore Menu</span>
+                  <ChevronRight className="w-5 h-5" />
+                </a>
+
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hello Al-Hannan Cakes & More! I would like to inquire about ordering a cake/small chops.')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium px-8 py-3.5 rounded-full shadow transition flex items-center gap-2"
+                >
+                  <MessageSquare className="w-5 h-5 text-emerald-400 fill-emerald-400" />
+                  <span>Chat on WhatsApp</span>
+                </a>
+              </div>
+
+              {/* Trust Badges */}
+              <div className="pt-8 border-t border-white/10 grid grid-cols-3 gap-4 text-center lg:text-left">
+                <div>
+                  <p className="text-2xl font-bold text-[#E5C158] font-serif">100%</p>
+                  <p className="text-xs text-purple-200">Fresh Ingredients</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-[#E5C158] font-serif">Hygiene</p>
+                  <p className="text-xs text-purple-200">Guaranteed Kitchen</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-[#E5C158] font-serif">Ibadan</p>
+                  <p className="text-xs text-purple-200">Doorstep Delivery</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Image / Brand Emblem Highlight */}
+            <div className="lg:col-span-5 relative flex justify-center">
+              <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-[#D4AF37]/50 group">
+                <img
+                  src="https://images.unsplash.com/photo-1535141192574-5d4897c13136?auto=format&fit=crop&w=800&q=80"
+                  alt="Al-Hannan Wedding Cake Showcase"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#4B1D5A]/90 via-transparent to-transparent flex flex-col justify-end p-6">
+                  <span className="text-xs uppercase font-semibold text-[#E5C158] tracking-widest">Featured Creation</span>
+                  <h3 className="text-2xl font-serif font-bold text-white">3-Tier Luxury Marble Cake</h3>
+                  <p className="text-xs text-purple-200 mt-1">Accented with 24K edible gold leaves & natural white orchids.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 4. KEY SELLING POINTS BANNER */}
+      <section className="bg-gradient-to-r from-[#D4AF37] via-[#E5C158] to-[#D4AF37] py-6 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-[#381344]">
+            <div className="flex flex-col items-center gap-1.5">
+              <ShieldCheck className="w-7 h-7" />
+              <h4 className="font-bold text-sm md:text-base">Hygienically Prepared</h4>
+              <p className="text-xs font-medium text-[#4B1D5A]/80">Clean & standard production</p>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <Sparkles className="w-7 h-7" />
+              <h4 className="font-bold text-sm md:text-base">Fresh Ingredients</h4>
+              <p className="text-xs font-medium text-[#4B1D5A]/80">Baked strictly on order</p>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <Heart className="w-7 h-7" />
+              <h4 className="font-bold text-sm md:text-base">Made Just For You</h4>
+              <p className="text-xs font-medium text-[#4B1D5A]/80">Custom designs & flavors</p>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <CheckCircle className="w-7 h-7" />
+              <h4 className="font-bold text-sm md:text-base">Delicious Small Chops</h4>
+              <p className="text-xs font-medium text-[#4B1D5A]/80">Perfect for gatherings</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. INTERACTIVE PRODUCT CATALOG & MENU */}
+      <section id="menu" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-[#4B1D5A] font-bold text-xs uppercase tracking-widest bg-purple-100 px-3 py-1 rounded-full">
+            Our Menu & Delicacies
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#4B1D5A] mt-3">
+            Handcrafted Treats & Baked Delights
+          </h2>
+          <p className="text-gray-600 mt-2">
+            Select your favorite items below to order instantly on WhatsApp or add to your basket.
+          </p>
+
+          {/* Search Bar & Filters */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            {/* Search Input */}
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search cakes, samosa..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-200 focus:outline-none focus:border-[#4B1D5A] text-sm bg-white shadow-sm"
+              />
+            </div>
+
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap justify-center gap-2 w-full sm:w-auto">
+              {['All', 'Cakes', 'Small Chops', 'Pastries', 'Savory Sweets', 'Drinks & Sweets'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                    selectedCategory === cat
+                      ? 'bg-[#4B1D5A] text-[#E5C158] shadow-md'
+                      : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Product Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+          {filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition duration-300 flex flex-col group"
+            >
+              {/* Product Image Box */}
+              <div className="relative h-60 overflow-hidden bg-gray-100">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+                <span className="absolute top-3 left-3 bg-[#4B1D5A] text-[#E5C158] text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full shadow">
+                  {product.tag}
+                </span>
+                <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-800 text-xs font-bold px-2 py-1 rounded-md shadow flex items-center gap-1">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  {product.rating}
+                </span>
+              </div>
+
+              {/* Product Details */}
+              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                    <span className="font-medium text-[#4B1D5A]">{product.category}</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-gray-400" />
+                      {product.prepTime}
+                    </span>
+                  </div>
+                  <h3 className="font-serif font-bold text-lg text-gray-900 group-hover:text-[#4B1D5A] transition">
+                    {product.name}
+                  </h3>
+                  <p className="text-gray-600 text-xs mt-2 line-clamp-2 leading-relaxed">
+                    {product.description}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div>
+                    <span className="text-xs text-gray-400 block font-medium">Price</span>
+                    <span className="text-lg font-bold text-[#4B1D5A]">
+                      {formatNaira(product.price)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="p-2.5 rounded-full border border-[#4B1D5A]/20 text-[#4B1D5A] hover:bg-[#4B1D5A] hover:text-white transition shadow-sm"
+                      title="Add to Cart"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleSingleWhatsAppOrder(product)}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs px-3.5 py-2.5 rounded-full transition shadow flex items-center gap-1.5"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 fill-current" />
+                      <span>Order</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. ABOUT US & BRAND STORY SECTION */}
+      <section id="about" className="bg-[#4B1D5A] text-white py-20 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            {/* Left Content */}
+            <div className="space-y-6">
+              <span className="text-[#E5C158] font-bold text-xs uppercase tracking-widest bg-white/10 px-3.5 py-1.5 rounded-full border border-[#D4AF37]/30">
+                About Al-Hannan Cakes & More
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white">
+                We Don't Just Bake Cakes, <br />
+                <span className="text-[#E5C158]">We Bake Happiness!</span>
+              </h2>
+              <p className="text-purple-100 text-base leading-relaxed font-light">
+                Located at No 24, Zone 2 Ajibode, near the University of Ibadan, Oyo State, <strong>Al-Hannan Cakes & More</strong> specializes in making every celebration unforgettable. From grand wedding centerpieces to crispy party small chops (samosa, spring rolls, puff-puff), every single order is prepared hygienically with fresh ingredients and packaged with unmatched elegance.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-[#E5C158] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-sm text-white">Hygienic Prep</h4>
+                    <p className="text-xs text-purple-200 mt-0.5">Strict health and kitchen cleanliness standard.</p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-[#E5C158] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-sm text-white">Custom Requests</h4>
+                    <p className="text-xs text-purple-200 mt-0.5">Tailored shapes, tiers, and delicious fillings.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Card / Logo Display */}
+            <div className="bg-gradient-to-b from-[#381344] to-[#250b2e] p-8 rounded-3xl border border-[#D4AF37]/40 shadow-2xl text-center space-y-6">
+              <div className="w-24 h-24 mx-auto rounded-full bg-[#D4AF37] p-1 shadow-inner">
+                <div className="w-full h-full bg-[#4B1D5A] rounded-full flex items-center justify-center font-serif font-bold text-4xl text-[#E5C158]">
+                  A
+                </div>
+              </div>
+              <div>
+                <h3 className="font-serif font-bold text-2xl text-[#E5C158]">AL-HANNAN</h3>
+                <p className="text-xs text-purple-200 tracking-widest uppercase">Cakes & More</p>
+              </div>
+              <blockquote className="italic text-purple-200 text-sm border-t border-b border-white/10 py-4 max-w-sm mx-auto">
+                "Made with love, Served with Joy."
+              </blockquote>
+              <div className="text-xs text-purple-300">
+                <p className="font-semibold text-white">Location:</p>
+                <p>No 24, Zone 2 Ajibode, University of Ibadan, Oyo State</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 7. CUSTOM ORDER REQUEST FORM */}
+      <section id="custom" className="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-12">
+            
+            {/* Form Info Sidebar */}
+            <div className="md:col-span-5 bg-gradient-to-br from-[#4B1D5A] to-[#381344] p-8 text-white flex flex-col justify-between">
+              <div>
+                <span className="text-[#E5C158] font-bold text-xs uppercase tracking-widest">Bespoke Bakery</span>
+                <h3 className="text-2xl font-serif font-bold mt-2">Design Your Custom Cake</h3>
+                <p className="text-purple-100 text-xs mt-3 leading-relaxed">
+                  Have a specific theme, photo reference, or celebration size? Fill out your specifications and instantly chat with our head baker on WhatsApp!
+                </p>
+              </div>
+
+              <div className="space-y-4 my-8">
+                <div className="flex items-center gap-3 text-xs text-purple-100">
+                  <Clock className="w-5 h-5 text-[#E5C158]" />
+                  <span>Book at least 24-48 hours ahead for custom cakes</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-purple-100">
+                  <Phone className="w-5 h-5 text-[#E5C158]" />
+                  <span>Direct Hotline: 07061459509</span>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-purple-300">
+                Al-Hannan Cakes & More © 2026 • Ibadan
+              </p>
+            </div>
+
+            {/* Interactive Form */}
+            <div className="md:col-span-7 p-8">
+              <form onSubmit={handleCustomOrderSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Your Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Mrs. Adebayo"
+                    value={customOrder.name}
+                    onChange={(e) => setCustomOrder({ ...customOrder, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Event Date</label>
+                    <input
+                      type="date"
+                      required
+                      value={customOrder.eventDate}
+                      onChange={(e) => setCustomOrder({ ...customOrder, eventDate: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Preferred Flavor</label>
+                    <select
+                      value={customOrder.cakeFlavor}
+                      onChange={(e) => setCustomOrder({ ...customOrder, cakeFlavor: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A] bg-white"
+                    >
+                      <option>Red Velvet</option>
+                      <option>Rich Fudgy Chocolate</option>
+                      <option>Vanilla Sponge</option>
+                      <option>Strawberry Delight</option>
+                      <option>Fruit & Nut Sponge</option>
+                      <option>Marble Twist</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Expected Servings / Guests</label>
+                  <select
+                    value={customOrder.servings}
+                    onChange={(e) => setCustomOrder({ ...customOrder, servings: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A] bg-white"
+                  >
+                    <option>10 - 15 People (1 Tier)</option>
+                    <option>20 - 35 People (2 Tier)</option>
+                    <option>50+ People (3 Tier or larger)</option>
+                    <option>Party Tray / Small Chops Platter</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Special Instructions / Inscriptions</label>
+                  <textarea
+                    rows={3}
+                    placeholder="Specify cake colors, inscriptions (e.g. 'Happy 30th Birthday Funke!'), or dietary notes..."
+                    value={customOrder.notes}
+                    onChange={(e) => setCustomOrder({ ...customOrder, notes: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A]"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#4B1D5A] hover:bg-[#381344] text-[#E5C158] font-bold py-3.5 rounded-xl transition shadow-md flex items-center justify-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Send Custom Order via WhatsApp</span>
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 8. DYNAMIC PHOTO GALLERY & ADMIN UPLOADER */}
+      <section id="gallery" className="py-20 bg-gray-50 border-t border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+              <span className="text-[#4B1D5A] font-bold text-xs uppercase tracking-widest bg-purple-100 px-3 py-1 rounded-full">
+                Delightful Creations
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#4B1D5A] mt-2">
+                Our Showcase Gallery
+              </h2>
+              <p className="text-gray-600 text-sm mt-1">Browse photos of recent cakes, puff-puff, samosas, and party setups.</p>
+            </div>
+
+            {/* Filter Buttons & Owner Add Button */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex gap-1.5 bg-white p-1 rounded-full border border-gray-200 shadow-sm">
+                {['All', 'Cakes', 'Small Chops', 'Pastries', 'Drinks'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setGalleryFilter(cat)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition ${
+                      galleryFilter === cat
+                        ? 'bg-[#4B1D5A] text-white'
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Owner Add Photo Trigger */}
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="bg-[#D4AF37] hover:bg-[#b38f24] text-[#381344] font-bold text-xs px-4 py-2.5 rounded-full shadow transition flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add to Gallery</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Photo Gallery Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredGallery.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 group relative hover:shadow-lg transition"
+              >
+                <div className="h-64 overflow-hidden bg-gray-100">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                  />
+                </div>
+                <div className="p-4 bg-white">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#4B1D5A]">
+                    {item.category}
+                  </span>
+                  <h4 className="font-serif font-bold text-sm text-gray-900 truncate mt-0.5">
+                    {item.title}
+                  </h4>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* OWNER UPLOAD GALLERY MODAL */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-gray-100">
+            <button
+              onClick={() => setIsAddModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2 text-[#4B1D5A] font-serif font-bold text-xl mb-1">
+              <Upload className="w-5 h-5 text-[#D4AF37]" />
+              <h3>Add Photo to Gallery</h3>
+            </div>
+            <p className="text-xs text-gray-500 mb-6">Owner/Admin: Paste a high resolution image web link to showcase in your live gallery.</p>
+
+            <form onSubmit={handleAddGalleryImage} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Item Title</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Freshly Fried Samosas Tray"
+                  value={newImageTitle}
+                  onChange={(e) => setNewImageTitle(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Category</label>
+                <select
+                  value={newImageCategory}
+                  onChange={(e) => setNewImageCategory(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A] bg-white"
+                >
+                  <option>Cakes</option>
+                  <option>Small Chops</option>
+                  <option>Pastries</option>
+                  <option>Savory</option>
+                  <option>Drinks</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Image Web Link (URL)</label>
+                <input
+                  type="url"
+                  required
+                  placeholder="https://images.unsplash.com/..."
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#4B1D5A]"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-[#4B1D5A] text-[#E5C158] font-bold text-xs px-5 py-2.5 rounded-xl shadow hover:bg-[#381344] transition"
+                >
+                  Publish to Gallery
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 9. SHOPPING CART SIDEBAR */}
+      {isCartOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs">
+          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+              
+              {/* Cart Header */}
+              <div className="p-6 bg-[#4B1D5A] text-white flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-[#E5C158]" />
+                  <h3 className="font-serif font-bold text-lg">Your Order Basket</h3>
+                </div>
+                <button
+                  onClick={() => setIsCartOpen(false)}
+                  className="p-1 text-purple-200 hover:text-white rounded-full hover:bg-white/10"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Cart Items List */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                {cart.length === 0 ? (
+                  <div className="text-center py-16 space-y-4">
+                    <ShoppingBag className="w-16 h-16 mx-auto text-gray-300" />
+                    <p className="text-gray-500 font-medium">Your basket is currently empty.</p>
+                    <button
+                      onClick={() => setIsCartOpen(false)}
+                      className="bg-[#4B1D5A] text-[#E5C158] font-bold text-xs px-6 py-2.5 rounded-full"
+                    >
+                      Explore Menu Items
+                    </button>
+                  </div>
+                ) : (
+                  cart.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 gap-3"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-14 h-14 object-cover rounded-lg shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-serif font-bold text-sm text-gray-900 truncate">
+                          {item.name}
+                        </h4>
+                        <p className="text-xs text-[#4B1D5A] font-semibold">
+                          {formatNaira(item.price)}
+                        </p>
+                      </div>
+
+                      {/* Quantity Controls */}
+                      <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-lg border border-gray-200">
+                        <button
+                          onClick={() => updateQuantity(item.id, -1)}
+                          className="text-gray-500 hover:text-black font-bold text-xs px-1"
+                        >
+                          -
+                        </button>
+                        <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, 1)}
+                          className="text-gray-500 hover:text-black font-bold text-xs px-1"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Cart Footer */}
+              {cart.length > 0 && (
+                <div className="p-6 bg-gray-50 border-t border-gray-200 space-y-4">
+                  <div className="flex justify-between items-center text-sm font-bold text-gray-900">
+                    <span>Total Estimate:</span>
+                    <span className="text-xl text-[#4B1D5A]">{formatNaira(cartTotal)}</span>
+                  </div>
+
+                  <button
+                    onClick={handleCartCheckout}
+                    className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold py-3.5 rounded-full shadow-lg transition flex items-center justify-center gap-2"
+                  >
+                    <MessageSquare className="w-5 h-5 fill-current" />
+                    <span>Checkout via WhatsApp</span>
+                  </button>
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 10. CONTACT & FOOTER SECTION */}
+      <footer id="contact" className="bg-[#381344] text-white pt-16 pb-8 border-t-4 border-[#D4AF37]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+            
+            {/* Col 1: Brand Info */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#D4AF37] flex items-center justify-center font-serif font-bold text-xl text-[#4B1D5A]">
+                  A
+                </div>
+                <h3 className="font-serif font-bold text-xl text-white">AL-HANNAN</h3>
+              </div>
+              <p className="text-xs text-purple-200 leading-relaxed font-light">
+                Made with love, Served with Joy. Cakes for every occasion, memories that last. We don't just bake cakes, we bake happiness!
+              </p>
+              <div className="flex items-center gap-3 pt-2">
+                <a
+                  href="https://instagram.com/alhannancakesandmore"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 rounded-full bg-white/10 hover:bg-[#D4AF37] hover:text-[#381344] transition"
+                  title="Instagram"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://facebook.com/alhannancakesandmore"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 rounded-full bg-white/10 hover:bg-[#D4AF37] hover:text-[#381344] transition"
+                  title="Facebook"
+                >
+                  <Facebook className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Col 2: Quick Links */}
+            <div className="space-y-3">
+              <h4 className="font-serif font-bold text-[#E5C158] text-sm uppercase tracking-wider">Quick Links</h4>
+              <ul className="space-y-2 text-xs text-purple-200">
+                <li><a href="#menu" className="hover:text-white transition">Menu & Cakes</a></li>
+                <li><a href="#about" className="hover:text-white transition">Our Bakery Story</a></li>
+                <li><a href="#custom" className="hover:text-white transition">Order Custom Cake</a></li>
+                <li><a href="#gallery" className="hover:text-white transition">Picture Gallery</a></li>
+              </ul>
+            </div>
+
+            {/* Col 3: Specialties */}
+            <div className="space-y-3">
+              <h4 className="font-serif font-bold text-[#E5C158] text-sm uppercase tracking-wider">Specialties</h4>
+              <ul className="space-y-2 text-xs text-purple-200">
+                <li>Wedding & Birthday Cakes</li>
+                <li>Gourmet Small Chops & Puff-Puff</li>
+                <li>Samosa & Spring Rolls</li>
+                <li>Shawarma & Meat Pies</li>
+                <li>Chilled Zobo & Yogurt Parfaits</li>
+              </ul>
+            </div>
+
+            {/* Col 4: Contact & Address */}
+            <div className="space-y-3">
+              <h4 className="font-serif font-bold text-[#E5C158] text-sm uppercase tracking-wider">Contact Us</h4>
+              <div className="space-y-2 text-xs text-purple-200">
+                <p className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-[#E5C158] shrink-0 mt-0.5" />
+                  <span>No 24, Zone 2 Ajibode, University of Ibadan, Oyo State</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-[#E5C158] shrink-0" />
+                  <span>07061459509</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Instagram className="w-4 h-4 text-[#E5C158] shrink-0" />
+                  <span>@alhannancakesandmore</span>
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="pt-8 text-center text-xs text-purple-300 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© {new Date().getFullYear()} Al-Hannan Cakes & More. All Rights Reserved.</p>
+            <p className="text-[11px] text-purple-400">Made with ❤️ for Ibadan's finest celebrations.</p>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  );
+}
